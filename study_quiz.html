@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>כלי תרגול קוד לבחינה</title>
+    <!-- טעינת Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* הגדרות גופן ועיצוב כללי - שימוש בפונט Inter שהוא גופן נקי וקריא */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* רקע בהיר */
+        }
+        .question-card {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
+            transition: transform 0.3s ease;
+        }
+        .question-card:hover {
+            transform: translateY(-2px);
+        }
+        .code-block {
+            background-color: #1e293b; /* Slate-800 */
+            color: #e0f2f1; /* Teal-50 - צבע גופן בהיר */
+            padding: 1rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <script>
+        // פונקציה להצגה/הסתרת התשובה
+        function toggleAnswer(questionId) {
+            const answerDiv = document.getElementById(`answer-${questionId}`);
+            const button = document.getElementById(`button-${questionId}`);
+            
+            if (answerDiv.classList.contains('hidden')) {
+                answerDiv.classList.remove('hidden');
+                answerDiv.classList.add('animate-fadeIn');
+                button.textContent = 'הסתר קוד והסבר';
+                button.classList.remove('bg-indigo-500');
+                button.classList.add('bg-gray-500');
+            } else {
+                answerDiv.classList.add('hidden');
+                answerDiv.classList.remove('animate-fadeIn');
+                button.textContent = 'לחץ לחשיפת הקוד וההסבר';
+                button.classList.add('bg-indigo-500');
+                button.classList.remove('bg-gray-500');
+            }
+        }
+    </script>
+
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-3xl font-extrabold text-indigo-700 mb-6 border-b-4 border-indigo-400 pb-2 text-center">
+            כלי תרגול לבחינת הגמר - 💻 שליטה בקוד
+        </h1>
+
+        <p class="text-lg text-gray-600 mb-8 text-center">
+            זהה את המיקום הנכון בקוד וכתוב את השורות הרלוונטיות.
+        </p>
+        
+        <!-- מיכל לשאלות -->
+        <div id="questions-container" class="space-y-6">
+            
+            <!-- שאלה 1: JSON Parsing (Correct Answer Index) -->
+            <div class="question-card bg-white p-6 rounded-xl border border-indigo-200">
+                <h2 class="text-xl font-bold text-gray-800 mb-4">שאלה 1: שליפת מספר התשובה הנכונה (JSON)</h2>
+                <p class="text-gray-700 mb-4">
+                    <span class="font-semibold text-indigo-600">השאלה:</span> 
+                    בפרויקט ה-Trivia, הורדת שאלות מהרשת באמצעות `AsyncTask` והעברת אותן לפורמט JSON. היכן בתוך הפונקציה המטפלת בנתוני ה-JSON אתה שולף את **מספר התשובה הנכונה** (`correct_answer`)? הראה את שורת הקוד הרלוונטית.
+                </p>
+                <button id="button-q1" onclick="toggleAnswer('q1')" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg transition duration-150 ease-in-out w-full md:w-auto text-sm">
+                    לחץ לחשיפת הקוד וההסבר
+                </button>
+                <div id="answer-q1" class="hidden mt-4 p-4 bg-indigo-50 border-r-4 border-indigo-400 rounded-lg">
+                    <p class="font-bold text-indigo-700 mb-2">קוד רלוונטי (בתוך `onPostExecute` של ה-`AsyncTask`):</p>
+                    <div class="code-block">
+                        <pre>
+// ... בתוך לולאת ה-for שעוברת על ה-JSONArray ...
+JSONObject arrElem=jsonArray.getJSONObject(i);
+
+// שורת הקוד הרלוונטית:
+correct_answer=arrElem.getInt("correct_answer");
+
+JSONArray answersArray = arrElem.getJSONArray("answers");
+// ... המשך שליפת שאר הנתונים
+                        </pre>
+                    </div>
+                    <p class="text-gray-700 mt-3">
+                        <span class="font-bold text-indigo-700">הסבר:</span> הפונקציה `getInt("correct_answer")` משמשת לשליפה ישירה של הערך המספרי של המפתח "correct_answer" מתוך אובייקט ה-JSON הנוכחי (`arrElem`).
+                    </p>
+                </div>
+            </div>
+
+            <!-- שאלה 2: SQLite Deletion (CRUD) -->
+            <div class="question-card bg-white p-6 rounded-xl border border-indigo-200">
+                <h2 class="text-xl font-bold text-gray-800 mb-4">שאלה 2: מחיקת משתמש מבסיס הנתונים</h2>
+                <p class="text-gray-700 mb-4">
+                    <span class="font-semibold text-indigo-600">השאלה:</span> 
+                    כאשר משתמש בוחר למחוק את החשבון שלו, איזה **שלוש שורות קוד** מרכזיות במחלקת ה-Helper (או הפונקציה שקוראת לה) מבצעות את המחיקה בפועל מטבלת `USERS_TABLE`?
+                </p>
+                <button id="button-q2" onclick="toggleAnswer('q2')" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg transition duration-150 ease-in-out w-full md:w-auto text-sm">
+                    לחץ לחשיפת הקוד וההסבר
+                </button>
+                <div id="answer-q2" class="hidden mt-4 p-4 bg-indigo-50 border-r-4 border-indigo-400 rounded-lg">
+                    <p class="font-bold text-indigo-700 mb-2">קוד רלוונטי (בתוך פונקציית `deleteUser()`):</p>
+                    <div class="code-block">
+                        <pre>
+db=helperDB.getWritableDatabase(); // 1. קבלת גישת כתיבה
+String where=helperDB.EMAIL_COL+"=?"; // 2. הגדרת התנאי
+String [] args=new String [] {email}; // 3. פרמטרים לתנאי
+db.delete(helperDB.USERS_TABLE,where, args); // 4. ביצוע המחיקה
+                        </pre>
+                    </div>
+                    <p class="text-gray-700 mt-3">
+                        <span class="font-bold text-indigo-700">הסבר:</span> השיטה `db.delete()` מקבלת את שם הטבלה, את תנאי המחיקה (`where` - המונע הזרקת SQL) ואת הערכים להצבה בתנאי (`args`).
+                    </p>
+                </div>
+            </div>
+
+            <!-- שאלה 3: SharedPreferences Reading -->
+            <div class="question-card bg-white p-6 rounded-xl border border-indigo-200">
+                <h2 class="text-xl font-bold text-gray-800 mb-4">שאלה 3: קריאת נתוני הגדרות</h2>
+                <p class="text-gray-700 mb-4">
+                    <span class="font-semibold text-indigo-600">השאלה:</span> 
+                    כתוב את הקוד המלא (שתי שורות) הדרוש לקריאת ערך בוליאני (boolean) בשם `"music_on"` מתוך קובץ ה-`SharedPreferences` שלך, כאשר ערך ברירת המחדל למקרה שהנתון לא קיים הוא `false`.
+                </p>
+                <button id="button-q3" onclick="toggleAnswer('q3')" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg transition duration-150 ease-in-out w-full md:w-auto text-sm">
+                    לחץ לחשיפת הקוד וההסבר
+                </button>
+                <div id="answer-q3" class="hidden mt-4 p-4 bg-indigo-50 border-r-4 border-indigo-400 rounded-lg">
+                    <p class="font-bold text-indigo-700 mb-2">קוד רלוונטי:</p>
+                    <div class="code-block">
+                        <pre>
+SharedPreferences settings = getSharedPreferences("GAME_PREFS", MODE_PRIVATE);
+boolean musicOn = settings.getBoolean("music_on", false);
+                        </pre>
+                    </div>
+                    <p class="text-gray-700 mt-3">
+                        <span class="font-bold text-indigo-700">הסבר:</span> בשורה הראשונה מקבלים מופע של קובץ ההעדפות לפי שם הקובץ. בשורה השנייה קוראים את הערך הבוליאני, כאשר `false` הוא ערך ברירת המחדל אם המפתח `"music_on"` אינו קיים.
+                    </p>
+                </div>
+            </div>
+
+            <!-- שאלה 4: Menu Navigation -->
+            <div class="question-card bg-white p-6 rounded-xl border border-indigo-200">
+                <h2 class="text-xl font-bold text-gray-800 mb-4">שאלה 4: ניווט בתפריט הראשי</h2>
+                <p class="text-gray-700 mb-4">
+                    <span class="font-semibold text-indigo-600">השאלה:</span> 
+                    באיזו פונקציה אתה מטפל בלחיצה על פריטי התפריט ב-`GameActivity`? הראה את קטע הקוד הספציפי שיוזם את המעבר לחלון ההנחיות (`InstructionsActivity`).
+                </p>
+                <button id="button-q4" onclick="toggleAnswer('q4')" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg transition duration-150 ease-in-out w-full md:w-auto text-sm">
+                    לחץ לחשיפת הקוד וההסבר
+                </button>
+                <div id="answer-q4" class="hidden mt-4 p-4 bg-indigo-50 border-r-4 border-indigo-400 rounded-lg">
+                    <p class="font-bold text-indigo-700 mb-2">קוד רלוונטי (בתוך `GameActivity`):</p>
+                    <div class="code-block">
+                        <pre>
+public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+    int itemId=item.getItemId();
+    // ... טיפול באפשרויות אחרות ...
+    else if (itemId==R.id.mnuInstructions)
+    {
+        Intent intent=new Intent(GameActivity.this, InstructionsActivity.class);
+        startActivity(intent);
+    }
+    return super.onOptionsItemSelected(item);
+}
+                        </pre>
+                    </div>
+                    <p class="text-gray-700 mt-3">
+                        <span class="font-bold text-indigo-700">הסבר:</span> הפונקציה `onOptionsItemSelected` נקראת כאשר משתמש לוחץ על פריט בתפריט האפשרויות. אנו משווים את ה-ID של הפריט הנלחץ (`itemId`) ל-ID של כפתור ההנחיות (`R.id.mnuInstructions`) ויוצרים `Intent` כדי לעבור לחלון המטרה.
+                    </p>
+                </div>
+            </div>
+
+            <!-- שאלה 5: Input Validation -->
+            <div class="question-card bg-white p-6 rounded-xl border border-indigo-200">
+                <h2 class="text-xl font-bold text-gray-800 mb-4">שאלה 5: בדיקת תקינות קלט (אימות אימייל)</h2>
+                <p class="text-gray-700 mb-4">
+                    <span class="font-semibold text-indigo-600">השאלה:</span> 
+                    במסך הרישום או ההתחברות, נדרשת בדיקת תקינות קלט לאימייל. איזו פונקציה מובנית ב-Android או ביטוי רגולרי (Regex) סביר להניח ששימשת לבדיקה שפורמט האימייל תקין? רשום את **תחילת** הקוד של בדיקה זו (לדוגמה, התנאי `if`).
+                </p>
+                <button id="button-q5" onclick="toggleAnswer('q5')" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg transition duration-150 ease-in-out w-full md:w-auto text-sm">
+                    לחץ לחשיפת הקוד וההסבר
+                </button>
+                <div id="answer-q5" class="hidden mt-4 p-4 bg-indigo-50 border-r-4 border-indigo-400 rounded-lg">
+                    <p class="font-bold text-indigo-700 mb-2">קוד רלוונטי (בדיקת תקינות אימייל):</p>
+                    <div class="code-block">
+                        <pre>
+// קבלת האימייל משדה העריכה:
+String emailText = etEmail.getText().toString();
+
+// בדיקה באמצעות ה-Regex המובנה של Android:
+if (TextUtils.isEmpty(emailText) || !Patterns.EMAIL_ADDRESS.matcher(emailText).matches()) {
+    // הצגת הודעת שגיאה למשתמש
+    etEmail.setError("פורמט האימייל אינו תקין");
+    return;
+}
+                        </pre>
+                    </div>
+                    <p class="text-gray-700 mt-3">
+                        <span class="font-bold text-indigo-700">הסבר:</span> הדרך המקובלת לבדיקת פורמט אימייל היא שימוש ב-<span class="font-mono bg-gray-200 p-1 rounded">Patterns.EMAIL_ADDRESS</span>. זהו ביטוי רגולרי (Regex) מוגדר מראש ב-Android הבודק את התבנית הנכונה של האימייל. קוד זה בודק אם השדה ריק **או** אם הוא אינו תואם לתבנית האימייל.
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-center mt-10 text-gray-500 text-sm">
+            <p>בהצלחה רבה! תרגול זה נועד לוודא שאתה שולט בפרטים הקטנים של הפרויקט.</p>
+        </div>
+
+    </div>
+</body>
+</html>
