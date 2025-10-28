@@ -27,6 +27,7 @@
             overflow-x: auto;
             font-family: monospace;
             font-size: 0.9rem;
+            direction: ltr; /* Added for LTR code display */
         }
     </style>
 </head>
@@ -80,14 +81,14 @@
                     <p class="font-bold text-indigo-700 mb-2">קוד רלוונטי (בתוך `onPostExecute` של ה-`AsyncTask`):</p>
                     <div class="code-block">
                         <pre>
-// ... בתוך לולאת ה-for שעוברת על ה-JSONArray ...
+// ... inside the for loop iterating over the JSONArray ...
 JSONObject arrElem=jsonArray.getJSONObject(i);
 
-// שורת הקוד הרלוונטית:
+// The relevant code line:
 correct_answer=arrElem.getInt("correct_answer");
 
 JSONArray answersArray = arrElem.getJSONArray("answers");
-// ... המשך שליפת שאר הנתונים
+// ... Continue retrieving other data
                         </pre>
                     </div>
                     <p class="text-gray-700 mt-3">
@@ -110,10 +111,10 @@ JSONArray answersArray = arrElem.getJSONArray("answers");
                     <p class="font-bold text-indigo-700 mb-2">קוד רלוונטי (בתוך פונקציית `deleteUser()`):</p>
                     <div class="code-block">
                         <pre>
-db=helperDB.getWritableDatabase(); // 1. קבלת גישת כתיבה
-String where=helperDB.EMAIL_COL+"=?"; // 2. הגדרת התנאי
-String [] args=new String [] {email}; // 3. פרמטרים לתנאי
-db.delete(helperDB.USERS_TABLE,where, args); // 4. ביצוע המחיקה
+db=helperDB.getWritableDatabase(); // 1. Get write access
+String where=helperDB.EMAIL_COL+"=?"; // 2. Define the condition
+String [] args=new String [] {email}; // 3. Parameters for the condition
+db.delete(helperDB.USERS_TABLE,where, args); // 4. Perform the deletion
                         </pre>
                     </div>
                     <p class="text-gray-700 mt-3">
@@ -162,7 +163,7 @@ boolean musicOn = settings.getBoolean("music_on", false);
                         <pre>
 public boolean onOptionsItemSelected(@NonNull MenuItem item) {
     int itemId=item.getItemId();
-    // ... טיפול באפשרויות אחרות ...
+    // ... handle other options ...
     else if (itemId==R.id.mnuInstructions)
     {
         Intent intent=new Intent(GameActivity.this, InstructionsActivity.class);
@@ -192,13 +193,13 @@ public boolean onOptionsItemSelected(@NonNull MenuItem item) {
                     <p class="font-bold text-indigo-700 mb-2">קוד רלוונטי (בדיקת תקינות אימייל):</p>
                     <div class="code-block">
                         <pre>
-// קבלת האימייל משדה העריכה:
+// Get the email from the EditText field:
 String emailText = etEmail.getText().toString();
 
-// בדיקה באמצעות ה-Regex המובנה של Android:
+// Check using the built-in Android Regex:
 if (TextUtils.isEmpty(emailText) || !Patterns.EMAIL_ADDRESS.matcher(emailText).matches()) {
-    // הצגת הודעת שגיאה למשתמש
-    etEmail.setError("פורמט האימייל אינו תקין");
+    // Display an error message to the user
+    etEmail.setError("פורמט האימייל אינו תקין"); 
     return;
 }
                         </pre>
