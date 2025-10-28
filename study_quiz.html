@@ -29,6 +29,13 @@
             font-size: 0.9rem;
             direction: ltr; /* Added for LTR code display */
         }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn {
+            animation: fadeIn 0.4s ease-out;
+        }
     </style>
 </head>
 <body class="p-4 md:p-8">
@@ -46,41 +53,23 @@
                 button.classList.remove('bg-indigo-500');
                 button.classList.add('bg-gray-500');
             } else {
-                answerDiv.classList.add('hidden');
+                // Remove the animation class before hiding for clean transition out (though CSS doesn't handle 'out' easily)
                 answerDiv.classList.remove('animate-fadeIn');
+                answerDiv.classList.add('hidden');
                 button.textContent = 'לחץ לחשיפת הקוד וההסבר';
                 button.classList.add('bg-indigo-500');
                 button.classList.remove('bg-gray-500');
             }
         }
-    </script>
 
-    <div class="max-w-4xl mx-auto">
-        <h1 class="text-3xl font-extrabold text-indigo-700 mb-6 border-b-4 border-indigo-400 pb-2 text-center">
-            כלי תרגול לבחינת הגמר - 💻 שליטה בקוד
-        </h1>
-
-        <p class="text-lg text-gray-600 mb-8 text-center">
-            זהה את המיקום הנכון בקוד וכתוב את השורות הרלוונטיות.
-        </p>
-        
-        <!-- מיכל לשאלות -->
-        <div id="questions-container" class="space-y-6">
-            
-            <!-- שאלה 1: JSON Parsing (Correct Answer Index) -->
-            <div class="question-card bg-white p-6 rounded-xl border border-indigo-200">
-                <h2 class="text-xl font-bold text-gray-800 mb-4">שאלה 1: שליפת מספר התשובה הנכונה (JSON)</h2>
-                <p class="text-gray-700 mb-4">
-                    <span class="font-semibold text-indigo-600">השאלה:</span> 
-                    בפרויקט ה-Trivia, הורדת שאלות מהרשת באמצעות `AsyncTask` והעברת אותן לפורמט JSON. היכן בתוך הפונקציה המטפלת בנתוני ה-JSON אתה שולף את **מספר התשובה הנכונה** (`correct_answer`)? הראה את שורת הקוד הרלוונטית.
-                </p>
-                <button id="button-q1" onclick="toggleAnswer('q1')" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg transition duration-150 ease-in-out w-full md:w-auto text-sm">
-                    לחץ לחשיפת הקוד וההסבר
-                </button>
-                <div id="answer-q1" class="hidden mt-4 p-4 bg-indigo-50 border-r-4 border-indigo-400 rounded-lg">
-                    <p class="font-bold text-indigo-700 mb-2">קוד רלוונטי (בתוך `onPostExecute` של ה-`AsyncTask`):</p>
-                    <div class="code-block">
-                        <pre>
+        // מערך השאלות המלא (30 שאלות נוספות + 5 הקיימות)
+        const questionsData = [
+            // Original Question 1
+            {
+                id: 'q1',
+                title: 'שאלה 1: שליפת מספר התשובה הנכונה (JSON)',
+                query: 'בפרויקט ה-Trivia, הורדת שאלות מהרשת באמצעות `AsyncTask` והעברת אותן לפורמט JSON. היכן בתוך הפונקציה המטפלת בנתוני ה-JSON אתה שולף את **מספר התשובה הנכונה** (`correct_answer`)? הראה את שורת הקוד הרלוונטית.',
+                code: `
 // ... inside the for loop iterating over the JSONArray ...
 JSONObject arrElem=jsonArray.getJSONObject(i);
 
@@ -89,78 +78,39 @@ correct_answer=arrElem.getInt("correct_answer");
 
 JSONArray answersArray = arrElem.getJSONArray("answers");
 // ... Continue retrieving other data
-                        </pre>
-                    </div>
-                    <p class="text-gray-700 mt-3">
-                        <span class="font-bold text-indigo-700">הסבר:</span> הפונקציה `getInt("correct_answer")` משמשת לשליפה ישירה של הערך המספרי של המפתח "correct_answer" מתוך אובייקט ה-JSON הנוכחי (`arrElem`).
-                    </p>
-                </div>
-            </div>
-
-            <!-- שאלה 2: SQLite Deletion (CRUD) -->
-            <div class="question-card bg-white p-6 rounded-xl border border-indigo-200">
-                <h2 class="text-xl font-bold text-gray-800 mb-4">שאלה 2: מחיקת משתמש מבסיס הנתונים</h2>
-                <p class="text-gray-700 mb-4">
-                    <span class="font-semibold text-indigo-600">השאלה:</span> 
-                    כאשר משתמש בוחר למחוק את החשבון שלו, איזה **שלוש שורות קוד** מרכזיות במחלקת ה-Helper (או הפונקציה שקוראת לה) מבצעות את המחיקה בפועל מטבלת `USERS_TABLE`?
-                </p>
-                <button id="button-q2" onclick="toggleAnswer('q2')" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg transition duration-150 ease-in-out w-full md:w-auto text-sm">
-                    לחץ לחשיפת הקוד וההסבר
-                </button>
-                <div id="answer-q2" class="hidden mt-4 p-4 bg-indigo-50 border-r-4 border-indigo-400 rounded-lg">
-                    <p class="font-bold text-indigo-700 mb-2">קוד רלוונטי (בתוך פונקציית `deleteUser()`):</p>
-                    <div class="code-block">
-                        <pre>
+                        `,
+                explanation: 'הפונקציה `getInt("correct_answer")` משמשת לשליפה ישירה של הערך המספרי של המפתח "correct_answer" מתוך אובייקט ה-JSON הנוכחי (`arrElem`).'
+            },
+            // Original Question 2
+            {
+                id: 'q2',
+                title: 'שאלה 2: מחיקת משתמש מבסיס הנתונים',
+                query: 'כאשר משתמש בוחר למחוק את החשבון שלו, איזה **שלוש שורות קוד** מרכזיות במחלקת ה-Helper (או הפונקציה שקוראת לה) מבצעות את המחיקה בפועל מטבלת `USERS_TABLE`?',
+                code: `
 db=helperDB.getWritableDatabase(); // 1. Get write access
 String where=helperDB.EMAIL_COL+"=?"; // 2. Define the condition
 String [] args=new String [] {email}; // 3. Parameters for the condition
 db.delete(helperDB.USERS_TABLE,where, args); // 4. Perform the deletion
-                        </pre>
-                    </div>
-                    <p class="text-gray-700 mt-3">
-                        <span class="font-bold text-indigo-700">הסבר:</span> השיטה `db.delete()` מקבלת את שם הטבלה, את תנאי המחיקה (`where` - המונע הזרקת SQL) ואת הערכים להצבה בתנאי (`args`).
-                    </p>
-                </div>
-            </div>
-
-            <!-- שאלה 3: SharedPreferences Reading -->
-            <div class="question-card bg-white p-6 rounded-xl border border-indigo-200">
-                <h2 class="text-xl font-bold text-gray-800 mb-4">שאלה 3: קריאת נתוני הגדרות</h2>
-                <p class="text-gray-700 mb-4">
-                    <span class="font-semibold text-indigo-600">השאלה:</span> 
-                    כתוב את הקוד המלא (שתי שורות) הדרוש לקריאת ערך בוליאני (boolean) בשם `"music_on"` מתוך קובץ ה-`SharedPreferences` שלך, כאשר ערך ברירת המחדל למקרה שהנתון לא קיים הוא `false`.
-                </p>
-                <button id="button-q3" onclick="toggleAnswer('q3')" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg transition duration-150 ease-in-out w-full md:w-auto text-sm">
-                    לחץ לחשיפת הקוד וההסבר
-                </button>
-                <div id="answer-q3" class="hidden mt-4 p-4 bg-indigo-50 border-r-4 border-indigo-400 rounded-lg">
-                    <p class="font-bold text-indigo-700 mb-2">קוד רלוונטי:</p>
-                    <div class="code-block">
-                        <pre>
+                        `,
+                explanation: 'השיטה `db.delete()` מקבלת את שם הטבלה, את תנאי המחיקה (`where` - המונע הזרקת SQL) ואת הערכים להצבה בתנאי (`args`).'
+            },
+            // Original Question 3
+            {
+                id: 'q3',
+                title: 'שאלה 3: קריאת נתוני הגדרות',
+                query: 'כתוב את הקוד המלא (שתי שורות) הדרוש לקריאת ערך בוליאני (boolean) בשם `"music_on"` מתוך קובץ ה-`SharedPreferences` שלך, כאשר ערך ברירת המחדל למקרה שהנתון לא קיים הוא `false`.',
+                code: `
 SharedPreferences settings = getSharedPreferences("GAME_PREFS", MODE_PRIVATE);
 boolean musicOn = settings.getBoolean("music_on", false);
-                        </pre>
-                    </div>
-                    <p class="text-gray-700 mt-3">
-                        <span class="font-bold text-indigo-700">הסבר:</span> בשורה הראשונה מקבלים מופע של קובץ ההעדפות לפי שם הקובץ. בשורה השנייה קוראים את הערך הבוליאני, כאשר `false` הוא ערך ברירת המחדל אם המפתח `"music_on"` אינו קיים.
-                    </p>
-                </div>
-            </div>
-
-            <!-- שאלה 4: Menu Navigation -->
-            <div class="question-card bg-white p-6 rounded-xl border border-indigo-200">
-                <h2 class="text-xl font-bold text-gray-800 mb-4">שאלה 4: ניווט בתפריט הראשי</h2>
-                <p class="text-gray-700 mb-4">
-                    <span class="font-semibold text-indigo-600">השאלה:</span> 
-                    באיזו פונקציה אתה מטפל בלחיצה על פריטי התפריט ב-`GameActivity`? הראה את קטע הקוד הספציפי שיוזם את המעבר לחלון ההנחיות (`InstructionsActivity`).
-                </p>
-                <button id="button-q4" onclick="toggleAnswer('q4')" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg transition duration-150 ease-in-out w-full md:w-auto text-sm">
-                    לחץ לחשיפת הקוד וההסבר
-                </button>
-                <div id="answer-q4" class="hidden mt-4 p-4 bg-indigo-50 border-r-4 border-indigo-400 rounded-lg">
-                    <p class="font-bold text-indigo-700 mb-2">קוד רלוונטי (בתוך `GameActivity`):</p>
-                    <div class="code-block">
-                        <pre>
+                        `,
+                explanation: 'בשורה הראשונה מקבלים מופע של קובץ ההעדפות לפי שם הקובץ. בשורה השנייה קוראים את הערך הבוליאני, כאשר `false` הוא ערך ברירת המחדל אם המפתח `"music_on"` אינו קיים.'
+            },
+            // Original Question 4
+            {
+                id: 'q4',
+                title: 'שאלה 4: ניווט בתפריט הראשי',
+                query: 'באיזו פונקציה אתה מטפל בלחיצה על פריטי התפריט ב-`GameActivity`? הראה את קטע הקוד הספציפי שיוזם את המעבר לחלון ההנחיות (`InstructionsActivity`).',
+                code: `
 public boolean onOptionsItemSelected(@NonNull MenuItem item) {
     int itemId=item.getItemId();
     // ... handle other options ...
@@ -171,28 +121,15 @@ public boolean onOptionsItemSelected(@NonNull MenuItem item) {
     }
     return super.onOptionsItemSelected(item);
 }
-                        </pre>
-                    </div>
-                    <p class="text-gray-700 mt-3">
-                        <span class="font-bold text-indigo-700">הסבר:</span> הפונקציה `onOptionsItemSelected` נקראת כאשר משתמש לוחץ על פריט בתפריט האפשרויות. אנו משווים את ה-ID של הפריט הנלחץ (`itemId`) ל-ID של כפתור ההנחיות (`R.id.mnuInstructions`) ויוצרים `Intent` כדי לעבור לחלון המטרה.
-                    </p>
-                </div>
-            </div>
-
-            <!-- שאלה 5: Input Validation -->
-            <div class="question-card bg-white p-6 rounded-xl border border-indigo-200">
-                <h2 class="text-xl font-bold text-gray-800 mb-4">שאלה 5: בדיקת תקינות קלט (אימות אימייל)</h2>
-                <p class="text-gray-700 mb-4">
-                    <span class="font-semibold text-indigo-600">השאלה:</span> 
-                    במסך הרישום או ההתחברות, נדרשת בדיקת תקינות קלט לאימייל. איזו פונקציה מובנית ב-Android או ביטוי רגולרי (Regex) סביר להניח ששימשת לבדיקה שפורמט האימייל תקין? רשום את **תחילת** הקוד של בדיקה זו (לדוגמה, התנאי `if`).
-                </p>
-                <button id="button-q5" onclick="toggleAnswer('q5')" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg transition duration-150 ease-in-out w-full md:w-auto text-sm">
-                    לחץ לחשיפת הקוד וההסבר
-                </button>
-                <div id="answer-q5" class="hidden mt-4 p-4 bg-indigo-50 border-r-4 border-indigo-400 rounded-lg">
-                    <p class="font-bold text-indigo-700 mb-2">קוד רלוונטי (בדיקת תקינות אימייל):</p>
-                    <div class="code-block">
-                        <pre>
+                        `,
+                explanation: 'הפונקציה `onOptionsItemSelected` נקראת כאשר משתמש לוחץ על פריט בתפריט האפשרויות. אנו משווים את ה-ID של הפריט הנלחץ (`itemId`) ל-ID של כפתור ההנחיות (`R.id.mnuInstructions`) ויוצרים `Intent` כדי לעבור לחלון המטרה.'
+            },
+            // Original Question 5
+            {
+                id: 'q5',
+                title: 'שאלה 5: בדיקת תקינות קלט (אימות אימייל)',
+                query: 'במסך הרישום או ההתחברות, נדרשת בדיקת תקינות קלט לאימייל. איזו פונקציה מובנית ב-Android או ביטוי רגולרי (Regex) סביר להניח ששימשת לבדיקה שפורמט האימייל תקין? רשום את **תחילת** הקוד של בדיקה זו (לדוגמה, התנאי `if`).',
+                code: `
 // Get the email from the EditText field:
 String emailText = etEmail.getText().toString();
 
@@ -202,13 +139,473 @@ if (TextUtils.isEmpty(emailText) || !Patterns.EMAIL_ADDRESS.matcher(emailText).m
     etEmail.setError("פורמט האימייל אינו תקין"); 
     return;
 }
-                        </pre>
-                    </div>
-                    <p class="text-gray-700 mt-3">
-                        <span class="font-bold text-indigo-700">הסבר:</span> הדרך המקובלת לבדיקת פורמט אימייל היא שימוש ב-<span class="font-mono bg-gray-200 p-1 rounded">Patterns.EMAIL_ADDRESS</span>. זהו ביטוי רגולרי (Regex) מוגדר מראש ב-Android הבודק את התבנית הנכונה של האימייל. קוד זה בודק אם השדה ריק **או** אם הוא אינו תואם לתבנית האימייל.
+                        `,
+                explanation: 'הדרך המקובלת לבדיקת פורמט אימייל היא שימוש ב-<span class="font-mono bg-gray-200 p-1 rounded">Patterns.EMAIL_ADDRESS</span>. זהו ביטוי רגולרי (Regex) מוגדר מראש ב-Android הבודק את התבנית הנכונה של האימייל. קוד זה בודק אם השדה ריק **או** אם הוא אינו תואם לתבנית האימייל.'
+            },
+            // --- 30 New Questions ---
+
+            // Q6: SQLite INSERT
+            {
+                id: 'q6',
+                title: 'שאלה 6: הוספת משתמש חדש ל-SQLite',
+                query: 'הצג את שורות הקוד המרכזיות (שימוש ב-`ContentValues`) הדרושות כדי להוסיף משתמש חדש (שם פרטי, שם משפחה, אימייל וסיסמה) לטבלת `USERS_TABLE`.',
+                code: `
+ContentValues values = new ContentValues();
+values.put(FIRST_NAME_COL, user.getFirstName());
+values.put(LAST_NAME_COL, user.getLastName());
+values.put(EMAIL_COL, user.getEmail());
+values.put(PASSWORD_COL, user.getPassword());
+// Assuming 'db' is writable database instance
+db.insert(USERS_TABLE, null, values); 
+                        `,
+                explanation: 'ה-`ContentValues` הוא מפת מפתחות-ערכים (Key-Value) שבה המפתח הוא שם העמודה בטבלה והערך הוא הנתון לשמירה. `db.insert` מבצע את ההוספה.'
+            },
+            // Q7: SQLite SELECT (Login)
+            {
+                id: 'q7',
+                title: 'שאלה 7: שליפת משתמש לצורך התחברות',
+                query: 'כתוב את שורת הקוד המשתמשת ב-`db.query` כדי לבצע שאילתה לטבלת המשתמשים, תוך סינון לפי אימייל וסיסמה, כדי לבדוק האם המשתמש קיים.',
+                code: `
+String selection = EMAIL_COL + " = ? AND " + PASSWORD_COL + " = ?";
+String[] selectionArgs = {email, password};
+Cursor cursor = db.query(USERS_TABLE, null, selection, selectionArgs, null, null, null);
+// Check if cursor.getCount() > 0 for successful login
+                        `,
+                explanation: 'השימוש בסימני שאלה (`?`) והעברת הנתונים במערך `selectionArgs` מונע הזרקת SQL. ה-`Cursor` מחזיק את תוצאות השאילתה.'
+            },
+            // Q8: SQLite UPDATE
+            {
+                id: 'q8',
+                title: 'שאלה 8: עדכון סיסמת משתמש',
+                query: 'הצג את הקוד המשתמש ב-`db.update` כדי לעדכן את עמודת הסיסמה (`PASSWORD_COL`) עבור משתמש ספציפי (לפי אימייל).',
+                code: `
+ContentValues values = new ContentValues();
+values.put(PASSWORD_COL, newPassword);
+String where = EMAIL_COL + " = ?";
+String[] whereArgs = {email};
+db.update(USERS_TABLE, values, where, whereArgs);
+                        `,
+                explanation: 'ה-`ContentValues` מכיל רק את העמודה שצריך לעדכן (סיסמה). התנאי `where` והארגומנטים `whereArgs` משמשים לאיתור המשתמש הספציפי.'
+            },
+            // Q9: SQLite Helper - onCreate
+            {
+                id: 'q9',
+                title: 'שאלה 9: יצירת טבלת משתמשים (SQL)',
+                query: 'מהי מחרוזת ה-SQL המלאה שכתבת בתוך פונקציית `onCreate` של מחלקת ה-`HelperDB` לצורך יצירת טבלת המשתמשים (`USERS_TABLE`)?',
+                code: `
+String createTable = "CREATE TABLE " + USERS_TABLE + " ("
+    + EMAIL_COL + " TEXT PRIMARY KEY,"
+    + FIRST_NAME_COL + " TEXT,"
+    + LAST_NAME_COL + " TEXT,"
+    + PHONE_COL + " TEXT,"
+    + PASSWORD_COL + " TEXT);";
+db.execSQL(createTable);
+                        `,
+                explanation: 'הפקודה `CREATE TABLE` יוצרת את הטבלה. האימייל משמש כמפתח ראשי (`PRIMARY KEY`) כדי למנוע כפילויות.'
+            },
+            // Q10: SQLite Helper - onUpgrade
+            {
+                id: 'q10',
+                title: 'שאלה 10: תפקיד הפונקציה `onUpgrade`',
+                query: 'מהי שורת הקוד הראשונה בתוך פונקציית `onUpgrade` של ה-`HelperDB`, ומה תפקידה?',
+                code: `
+public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+    db.execSQL("DROP TABLE IF EXISTS " + USERS_TABLE); // The first line
+    onCreate(db);
+}
+                        `,
+                explanation: 'הפונקודה `DROP TABLE IF EXISTS` מוחקת את הטבלה הישנה. פונקציה זו נקראת כאשר גרסת בסיס הנתונים (שמוגדרת קבוע) משתנה, ומטרתה לעדכן את מבנה הטבלאות (במקרה הפשוט - מחיקה ויצירה מחדש).'
+            },
+            // Q11: SharedPreferences Writing
+            {
+                id: 'q11',
+                title: 'שאלה 11: שמירת נתון בוליאני בהגדרות',
+                query: 'הצג את הקוד המלא (שלוש שורות) הדרוש לשמירת ערך `true` עבור המפתח `"music_on"` ב-`SharedPreferences`.',
+                code: `
+SharedPreferences settings = getSharedPreferences("GAME_PREFS", MODE_PRIVATE);
+SharedPreferences.Editor editor = settings.edit();
+editor.putBoolean("music_on", true);
+editor.apply(); // Or editor.commit();
+                        `,
+                explanation: 'יש לקבל מופע `Editor` מתוך ה-`SharedPreferences`, להשתמש בפונקציה המתאימה (`putBoolean`), ולבסוף לשמור את השינויים באמצעות `apply()` (אסינכרוני) או `commit()` (סינכרוני).'
+            },
+            // Q12: SharedPreferences MODE_PRIVATE
+            {
+                id: 'q12',
+                title: 'שאלה 12: משמעות `MODE_PRIVATE`',
+                query: 'מה משמעות הפרמטר `MODE_PRIVATE` שמועבר ל-`getSharedPreferences`?',
+                code: `
+// No code required, just the explanation of the concept
+                        `,
+                explanation: 'משמעותו שהקבצים שייווצרו על ידי ה-`SharedPreferences` יהיו נגישים רק לאפליקציה שיצרה אותם. זהו מצב האבטחה המומלץ והנפוץ.'
+            },
+            // Q13: AsyncTask Role of doInBackground
+            {
+                id: 'q13',
+                title: 'שאלה 13: תפקיד `doInBackground`',
+                query: 'מה מטרתה העיקרית של הפונקציה `doInBackground` ב-`AsyncTask`? מה אינו מותר לבצע בה?',
+                code: `
+protected String doInBackground(String... strings) {
+    // 1. Perform network connection and data reading (e.g., URL connection)
+    // 2. This runs on a background thread.
+    // ** Forbidden: ** DO NOT interact with UI elements (Views).
+    return all;
+}
+                        `,
+                explanation: 'המטרה היא לבצע פעולות ארוכות כמו קריאה מהרשת, עיבוד נתונים או גישה לבסיס נתונים כבדה, מבלי לחסום את ממשק המשתמש. אסור לגשת לרכיבי ה-UI מתוך פונקציה זו.'
+            },
+            // Q14: AsyncTask onPostExecute
+            {
+                id: 'q14',
+                title: 'שאלה 14: עדכון ממשק המשתמש מ-`AsyncTask`',
+                query: 'הראה את הפונקציה המאפשרת לעדכן את ממשק המשתמש לאחר סיום הפעולה ב-`doInBackground`, ומה היא מקבלת כפרמטר.',
+                code: `
+protected void onPostExecute(String s) { // s is the result from doInBackground
+    super.onPostExecute(s);
+    // 1. Parse the JSON string (s)
+    // 2. Update UI elements (e.g., start the GameActivity with new data)
+}
+                        `,
+                explanation: 'הפונקציה `onPostExecute` רצה ב-UI Thread (הראשי) ולכן מותר לגשת אליה לרכיבי הממשק. היא מקבלת את התוצאה שהוחזרה מ-`doInBackground`.'
+            },
+            // Q15: JSON Parsing - Question
+            {
+                id: 'q15',
+                title: 'שאלה 15: שליפת טקסט השאלה (JSON)',
+                query: 'הצג את שורת הקוד ששולפת את טקסט השאלה מתוך אובייקט ה-JSON הנוכחי (`arrElem`), בהנחה שהמפתח הוא `"question"`.',
+                code: `
+JSONObject arrElem=jsonArray.getJSONObject(i);
+String question = arrElem.getString("question"); // The required line
+// ...
+                        `,
+                explanation: 'הפונקציה `getString("question")` מחזירה את הערך המשויך למפתח `"question"` כטקסט.'
+            },
+            // Q16: JSON Parsing - Answers Array
+            {
+                id: 'q16',
+                title: 'שאלה 16: שליפת מערך התשובות (JSON)',
+                query: 'כיצד אתה שולף את מערך התשובות (`"answers"`) מתוך אובייקט ה-JSON הנוכחי, ומתחיל לולאה לעבור עליו?',
+                code: `
+JSONArray answersArray = arrElem.getJSONArray("answers");
+
+String[] answers = new String[answersArray.length()];
+for (int j = 0; j < answersArray.length(); j++) {
+    answers[j] = answersArray.getString(j);
+}
+                        `,
+                explanation: 'הפונקציה `getJSONArray("answers")` שולפת את ה-`JSONArray`. לאחר מכן, לולאה פשוטה ממיפוי את ערכי המערך למערך מחרוזות רגיל ב-Java.'
+            },
+            // Q17: Intent - putExtra
+            {
+                id: 'q17',
+                title: 'שאלה 17: העברת אימייל למסך המשחק',
+                query: 'במסך ההתחברות/רישום, הצג את הקוד המלא (שתי שורות) הדרוש להעברת האימייל של המשתמש (במשתנה `email`) למסך המשחק (`GameActivity`) באמצעות `Intent`.',
+                code: `
+Intent intent = new Intent(LoginActivity.this, GameActivity.class);
+intent.putExtra("USER_EMAIL", email); // The required line
+startActivity(intent);
+                        `,
+                explanation: 'השיטה `putExtra(key, value)` מאפשרת לחבר נתונים נוספים (Extras) ל-Intent. המפתח (`"USER_EMAIL"`) משמש לשליפה בצד המקבל.'
+            },
+            // Q18: Intent - getExtra
+            {
+                id: 'q18',
+                title: 'שאלה 18: קבלת האימייל במסך המשחק',
+                query: 'בתוך `onCreate` של `GameActivity`, הצג את הקוד הדרוש לקבלת האימייל שהועבר ב-`Intent` מהמסך הקודם.',
+                code: `
+Intent intent = getIntent();
+String userEmail = intent.getStringExtra("USER_EMAIL");
+// Now 'userEmail' holds the logged-in user's email
+                        `,
+                explanation: 'השיטה `getIntent()` מחזירה את ה-Intent שהתחיל את ה-Activity הנוכחי. `getStringExtra(key)` שולפת את הנתון לפי המפתח.'
+            },
+            // Q19: UI/Activity Lifecycle
+            {
+                id: 'q19',
+                title: 'שאלה 19: שמירת נתונים בסיבוב מסך',
+                query: 'באיזו פונקציה ב-Activity Lifecycle אתה משתמש כדי לשמור נתונים זמניים (כמו התוצאה הנוכחית) רגע לפני שהמסך נהרס (למשל, בגלל סיבוב מסך)?',
+                code: `
+@Override
+protected void onSaveInstanceState(@NonNull Bundle outState) {
+    super.onSaveInstanceState(outState);
+    outState.putInt("CURRENT_SCORE", currentScore); // Example
+}
+                        `,
+                explanation: 'הפונקציה `onSaveInstanceState` נקראת כאשר ה-Activity עומד להיהרס על ידי המערכת (כמו בסיבוב מסך). ה-`Bundle` משמש לשמירת נתונים זמניים שישוחזרו ב-`onCreate` או `onRestoreInstanceState`.'
+            },
+            // Q20: Menu Inflate
+            {
+                id: 'q20',
+                title: 'שאלה 20: הצגת התפריט העליון',
+                query: 'איזו פונקציה במחלקת ה-Activity אחראית על טעינה והצגה של פריטי התפריט (הכפתורים העליונים) מקובץ ה-XML?',
+                code: `
+@Override
+public boolean onCreateOptionsMenu(Menu menu) {
+    getMenuInflater().inflate(R.menu.main_menu, menu); // Assuming R.menu.main_menu is the file
+    return true;
+}
+                        `,
+                explanation: 'הפונקציה `onCreateOptionsMenu` נקראת פעם אחת כאשר התפריט נוצר לראשונה. `getMenuInflater().inflate()` טוען את פריטי התפריט מקובץ ה-XML לתוך אובייקט ה-`Menu`.'
+            },
+            // Q21: TextToSpeech Init
+            {
+                id: 'q21',
+                title: 'שאלה 21: אתחול TextToSpeech',
+                query: 'הצג את קטע הקוד הדרוש לאתחול אובייקט ה-`TextToSpeech` עם ה-`OnInitListener`.',
+                code: `
+textToSpeech = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+    @Override
+    public void onInit(int status) {
+        if (status == TextToSpeech.SUCCESS) {
+            // Success: set language, etc.
+        } else {
+            // Failure handling
+        }
+    }
+});
+                        `,
+                explanation: 'האתחול מתבצע באופן אסינכרוני. ה-`OnInitListener` מאפשר לוודא שהמנוע של TextToSpeech מוכן לפני שמתחילים להשתמש בו.'
+            },
+            // Q22: TextToSpeech Set Language
+            {
+                id: 'q22',
+                title: 'שאלה 22: הגדרת שפה ב-TextToSpeech',
+                query: 'בתוך ה-`onInit` המוצלח, כיצד אתה מגדיר את השפה לקול, למשל לעברית?',
+                code: `
+if (status == TextToSpeech.SUCCESS) {
+    Locale locale = new Locale("he"); // or simply Locale.getDefault()
+    int result = textToSpeech.setLanguage(locale);
+    
+    if (result == TextToSpeech.LANG_MISSING_DATA || 
+        result == TextToSpeech.LANG_NOT_SUPPORTED) {
+        // Handle language not supported
+    }
+}
+                        `,
+                explanation: 'יש להשתמש בפונקציה `setLanguage` עם אובייקט `Locale` מתאים. חשוב לבדוק את התוצאה לוודא שהשפה נתמכת.'
+            },
+            // Q23: Service - Start Music
+            {
+                id: 'q23',
+                title: 'שאלה 23: הפעלת שירות מוזיקת רקע',
+                query: 'הצג את שורות הקוד הדרושות להפעלת שירות המוזיקה שלך (`MusicService`).',
+                code: `
+Intent musicIntent = new Intent(this, MusicService.class);
+startService(musicIntent);
+                        `,
+                explanation: 'יצירת `Intent` המצביע על מחלקת ה-`Service` הרצויה וקריאה ל-`startService` מפעילה את השירות ברקע.'
+            },
+            // Q24: Service - Stop Music
+            {
+                id: 'q24',
+                title: 'שאלה 24: עצירת שירות מוזיקת רקע',
+                query: 'כיצד עוצרים שירות שפועל כעת ברקע (למשל, כאשר המשתמש מכבה את המוזיקה בהגדרות)?',
+                code: `
+Intent musicIntent = new Intent(this, MusicService.class);
+stopService(musicIntent);
+                        `,
+                explanation: 'יש ליצור שוב את ה-`Intent` המצביע על השירות ולקרוא ל-`stopService` כדי לבקש מהמערכת לעצור את השירות.'
+            },
+            // Q25: BroadcastReceiver Purpose
+            {
+                id: 'q25',
+                title: 'שאלה 25: שימוש ב-BroadcastReceiver',
+                query: 'בפרויקט שכלל עצירה בשיחת טלפון נכנסת, איזה `Intent` פעולה (Action) היית צריך לרשום במניפסט כדי להאזין לאירוע כזה?',
+                code: `
+<!-- In AndroidManifest.xml -->
+<action android:name="android.intent.action.PHONE_STATE"/>
+                        `,
+                explanation: 'הפעולה `android.intent.action.PHONE_STATE` משודרת על ידי המערכת בעת שינוי במצב הטלפון (כמו שיחה נכנסת/יוצאת).'
+            },
+            // Q26: BroadcastReceiver onReceive
+            {
+                id: 'q26',
+                title: 'שאלה 26: חתימת הפונקציה `onReceive`',
+                query: 'מהי חתימת הפונקציה (Method Signature) בתוך מחלקת ה-`BroadcastReceiver` שלך, ומהם הפרמטרים שהיא מקבלת?',
+                code: `
+public void onReceive(Context context, Intent intent) {
+    // Check intent action or state extras here
+}
+                        `,
+                explanation: 'הפונקציה `onReceive` היא המקום בו ה-Receiver מטפל באירוע המשודר. היא מקבלת את ה-`Context` ואת ה-`Intent` המשודר, המכיל את פרטי האירוע (כמו מצב השיחה הנוכחי).'
+            },
+            // Q27: Timer - Initialization
+            {
+                id: 'q27',
+                title: 'שאלה 27: אתחול `CountDownTimer`',
+                query: 'הצג את הקוד המלא לאתחול `CountDownTimer` עם ספירה של 30 שניות (30000 מילישניות), בקפיצות של שנייה אחת (1000 מילישניות).',
+                code: `
+new CountDownTimer(30000, 1000) {
+    public void onTick(long millisUntilFinished) {
+        // Update timer display
+    }
+
+    public void onFinish() {
+        // Time's up logic
+    }
+}.start();
+                        `,
+                explanation: 'הקונסטרוקטור מקבל את זמן הספירה הכולל ואת מרווח הקפיצה. יש להשתמש ב-`.start()` כדי להתחיל את הספירה לאחור מיידית.'
+            },
+            // Q28: Timer - onTick
+            {
+                id: 'q28',
+                title: 'שאלה 28: עדכון הטיימר בזמן אמת',
+                query: 'בתוך `onTick` של ה-`CountDownTimer`, כיצד אתה מחשב ומציג את הזמן הנותר כדקות ושניות?',
+                code: `
+public void onTick(long millisUntilFinished) {
+    long seconds = millisUntilFinished / 1000;
+    long minutes = seconds / 60;
+    seconds = seconds % 60;
+    
+    tvTimer.setText(String.format("%02d:%02d", minutes, seconds)); 
+}
+                        `,
+                explanation: 'הפרמטר `millisUntilFinished` מכיל את מספר המילישניות הנותרות. אנו ממירים אותו לדקות ושניות ומציגים אותו בפורמט מעוצב (כגון 00:30) ב-`TextView`.'
+            },
+            // Q29: Input Validation - Empty Check
+            {
+                id: 'q29',
+                title: 'שאלה 29: בדיקה אם שדה ריק',
+                query: 'כיצד אתה בודק אם שדה קלט (למשל, `etPassword`) ריק או מכיל רק רווחים, ומהי הודעת השגיאה שתציג לו?',
+                code: `
+if (etPassword.getText().toString().trim().isEmpty()) {
+    etPassword.setError("שדה הסיסמה אינו יכול להיות ריק");
+    return;
+}
+                        `,
+                explanation: 'השיטה `trim()` מסירה רווחים בהתחלה ובסוף. `isEmpty()` בודקת אם המחרוזת ריקה. `setError()` מציגה אייקון שגיאה והודעה בשדה הקלט עצמו.'
+            },
+            // Q30: UI Visibility - Hiding
+            {
+                id: 'q30',
+                title: 'שאלה 30: הסתרת רכיב',
+                query: 'הצג את שורת הקוד המסתירה לחלוטין רכיב מסוים מהמסך (למשל, `btnPlay`) כך שגם לא יתפוס מקום בפריסה.',
+                code: `
+btnPlay.setVisibility(View.GONE);
+                        `,
+                explanation: 'הקבוע `View.GONE` מסתיר את הרכיב וגורם לו לא לתפוס מקום בפריסה. `View.INVISIBLE` מסתיר אותו אך שומר את המקום שלו.'
+            },
+            // Q31: Resource Files - Reading Instructions
+            {
+                id: 'q31',
+                title: 'שאלה 31: קריאת קובץ מהתיקייה `raw`',
+                query: 'בפונקציה לקריאת ההנחיות, כיצד אתה פותח את קובץ ההנחיות (`R.raw.instructions`) לתוך `InputStream`?',
+                code: `
+InputStream is;
+// ... inside the try block ...
+is = getResources().openRawResource(R.raw.instructions);
+                        `,
+                explanation: 'השיטה `getResources().openRawResource(resource_id)` מאפשרת גישה לקבצים שנשמרו בתיקיית `res/raw` על ידי ה-ID שלהם.'
+            },
+            // Q32: AlertDialog - Confirmation Dialog
+            {
+                id: 'q32',
+                title: 'שאלה 32: יצירת דיאלוג אישור (AlertDialog)',
+                query: 'מהן שתי השורות הראשונות הדרושות ליצירת `AlertDialog.Builder` לצורך מחיקת משתמש?',
+                code: `
+AlertDialog.Builder adbCorrectResponse;
+adbCorrectResponse = new AlertDialog.Builder(UserSettingsActivity.this);
+adbCorrectResponse.setTitle("Delete User");
+adbCorrectResponse.setMessage("Are you sure you want to delete user?");
+                        `,
+                explanation: 'ה-`AlertDialog.Builder` מאפשר להגדיר את המאפיינים של חלון הדיאלוג (כותרת, הודעה, כפתורים).'
+            },
+            // Q33: AlertDialog - Positive Button
+            {
+                id: 'q33',
+                title: 'שאלה 33: טיפול בכפתור "כן" (Positive Button)',
+                query: 'הצג את קטע הקוד שמטפל בלחיצה על הכפתור החיובי ("Yes") בדיאלוג האישור, הכולל קריאה לפונקציית המחיקה ומעבר למסך ההתחברות.',
+                code: `
+adbCorrectResponse.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+    @Override
+    public void onClick(DialogInterface dialogInterface, int i) {
+        deleteUser(); // Call the deletion function
+        Intent intent=new Intent(UserSettingsActivity.this, LoginActivity.class);
+        startActivity(intent);
+    }
+});
+                        `,
+                explanation: 'ה-`PositiveButton` מקבל טקסט ו-`OnClickListener` המגדיר את הפעולה שתתבצע כאשר הכפתור נלחץ.'
+            },
+            // Q34: Helper Class
+            {
+                id: 'q34',
+                title: 'שאלה 34: יתרון מחלקת HelperDB נפרדת',
+                query: 'מדוע חשוב להשתמש במחלקת עזר נפרדת (כמו `HelperDB` או `DBHandler`) עבור כל פעולות בסיס הנתונים (ולא לממש אותן ישירות ב-Activity)?',
+                code: `
+// No code required, just the explanation of the concept
+                        `,
+                explanation: 'עקרון ה-Single Responsibility Principle (SRP) – המחלקה מרכזת את כל הלוגיקה והמבנה של בסיס הנתונים במקום אחד, מה שמקל על תחזוקה, מונע כפילויות קוד ומפריד בין לוגיקת ה-DB ללוגיקת ה-UI.'
+            },
+            // Q35: Lottie Animation
+            {
+                id: 'q35',
+                title: 'שאלה 35: טעינת אנימציית Lottie',
+                query: 'כיצד טענת את אנימציית ה-Lottie לקובץ ה-XML? מהי התכונה הקובעת את קובץ ה-JSON של האנימציה?',
+                code: `
+<!-- In the XML Layout file -->
+<com.airbnb.lottie.LottieAnimationView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:lottie_fileName="loading.json"  <!-- The required attribute -->
+    app:lottie_autoPlay="true"
+    app:lottie_loop="true" />
+                        `,
+                explanation: 'התכונה `app:lottie_fileName` מצביעה על קובץ ה-JSON של האנימציה שנשמר בתיקיית `assets`. ה-`LottieAnimationView` היא הרכיב שמציג את האנימציה.'
+            }
+        ];
+        
+        // פונקציה לבניית ה-HTML של השאלות
+        function renderQuestions() {
+            const container = document.getElementById('questions-container');
+            let html = '';
+
+            questionsData.forEach(q => {
+                const questionHtml = `
+                <!-- ${q.title} -->
+                <div class="question-card bg-white p-6 rounded-xl border border-indigo-200">
+                    <h2 class="text-xl font-bold text-gray-800 mb-4">${q.title}</h2>
+                    <p class="text-gray-700 mb-4">
+                        <span class="font-semibold text-indigo-600">השאלה:</span> 
+                        ${q.query}
                     </p>
+                    <button id="button-${q.id}" onclick="toggleAnswer('${q.id}')" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg transition duration-150 ease-in-out w-full md:w-auto text-sm">
+                        לחץ לחשיפת הקוד וההסבר
+                    </button>
+                    <div id="answer-${q.id}" class="hidden mt-4 p-4 bg-indigo-50 border-r-4 border-indigo-400 rounded-lg">
+                        <p class="font-bold text-indigo-700 mb-2">קוד רלוונטי:</p>
+                        <div class="code-block">
+                            <pre>${q.code.trim()}</pre>
+                        </div>
+                        <p class="text-gray-700 mt-3">
+                            <span class="font-bold text-indigo-700">הסבר:</span> ${q.explanation}
+                        </p>
+                    </div>
                 </div>
-            </div>
+                `;
+                html += questionHtml;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // קריאה לפונקציה בעת טעינת המסך
+        window.onload = renderQuestions;
+    </script>
+
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-3xl font-extrabold text-indigo-700 mb-6 border-b-4 border-indigo-400 pb-2 text-center">
+            כלי תרגול לבחינת הגמר - 💻 שליטה בקוד
+        </h1>
+
+        <p class="text-lg text-gray-600 mb-8 text-center">
+            תרגל את יכולתך לנווט לקוד ספציפי ולהסביר אותו. יש כעת 35 שאלות.
+        </p>
+        
+        <!-- מיכל לשאלות (ימולא על ידי JavaScript) -->
+        <div id="questions-container" class="space-y-6">
+            <!-- Questions will be inserted here by JavaScript -->
         </div>
         
         <div class="text-center mt-10 text-gray-500 text-sm">
